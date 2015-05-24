@@ -59,3 +59,9 @@ public:
   std::string getStr() const;
 };
 
+class PrologVariable : public PrologTerm {
+public:
+  PrologVariable();
+  PrologVariable(term_t term);
+};
+

@@ -19,7 +19,6 @@ static const char *GetPrologTermStringStr(term_t term) {
   return s;
 }
 
-
 static PrologTerm::PrintFnTy GetAtomPrintFn() {
   return [](std::ostream &os, term_t term) {
     os << GetPrologTermAtomStr(term);
@@ -32,6 +31,13 @@ static PrologTerm::PrintFnTy GetStringPrintFn() {
   };
 }
 
+static PrologTerm::PrintFnTy GetVariablePrintFn() {
+  return [](std::ostream &os, term_t term) {
+    char *s;
+    assert(PL_get_chars(term, &s, CVT_VARIABLE));
+    os << s;
+  };
+}
 
 /**
  * PrologLifetime
@@ -118,5 +124,17 @@ PrologString::PrologString(term_t term)
 
 std::string PrologString::getStr() const {
   return GetPrologTermStringStr(getInternalTerm());
+}
+
+/**
+ * PrologVariable
+ */
+PrologVariable::PrologVariable()
+    : PrologTerm(GetVariablePrintFn()) {
+  PL_put_variable(getInternalTerm());
+}
+
+PrologVariable::PrologVariable(term_t term)
+    : PrologTerm(term, GetVariablePrintFn()) {
 }
 

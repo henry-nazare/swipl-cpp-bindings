@@ -32,4 +32,5 @@ endfunction()
 add_gtest_test(PrologLifetimeTest)
 add_gtest_test(PrologAtomTest)
 add_gtest_test(PrologStringTest)
+add_gtest_test(PrologVariableTest)
 
