@@ -20,3 +20,5 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 add_library(swiplcpp SHARED src/PrologInterface.cpp)
 target_link_libraries(swiplcpp swipl)
 
+add_subdirectory("ext/gtest/")
+
