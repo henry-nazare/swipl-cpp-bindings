@@ -118,3 +118,10 @@ private:
   PrologTermVector terms_;
 };
 
+class PrologCall {
+public:
+  static void run(PrologFunctor funcor);
+  static void fact(PrologTerm term);
+  static void consult(const char *filename);
+};
+

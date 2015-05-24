@@ -303,3 +303,21 @@ void PrologQuery::apply(std::function<void (PrologTermVector term)> function) {
   PL_cut_query(qid_);
 }
 
+/**
+ * PrologCall
+ */
+void PrologCall::run(PrologFunctor functor) {
+  PrologQuery query(functor);
+  query.apply([](PrologTermVector) {});
+}
+
+void PrologCall::fact(PrologTerm term) {
+  run(PrologFunctor("assert", PrologTermVector({term})));
+}
+
+void PrologCall::consult(const char *filename) {
+  PrologQuery query(
+      "consult", PrologTermVector({PrologAtom::fromString(filename)}));
+  query.apply([](PrologTermVector) {});
+}
+
