@@ -2,7 +2,9 @@
 
 #include <SWI-Prolog.h>
 
+#include <initializer_list>
 #include <ostream>
+#include <vector>
 
 class PrologLifetime {
 public:
@@ -66,5 +68,22 @@ class PrologVariable : public PrologTerm {
 public:
   PrologVariable();
   PrologVariable(term_t term);
+};
+
+class PrologTermVector : public PrologTerm {
+public:
+  PrologTermVector(size_t size);
+  PrologTermVector(std::initializer_list<PrologTerm> args);
+  PrologTermVector(std::vector<PrologTerm> args);
+
+  size_t size() const;
+
+  PrologTermHolder getAt(size_t idx) const;
+
+protected:
+  PrologTermVector(term_t term, size_t size);
+
+private:
+  size_t size_;
 };
 
