@@ -74,6 +74,18 @@ PrologTerm PrologTerm::from(term_t term) {
 PrologTermHolder::PrologTermHolder(term_t term) : term_(term) {
 }
 
+PrologAtom PrologTermHolder::asAtom() const {
+  return PrologAtom(term_);
+}
+
+PrologString PrologTermHolder::asString() const {
+  return PrologString(term_);
+}
+
+PrologVariable PrologTermHolder::asVariable() const {
+  return PrologVariable(term_);
+}
+
 term_t PrologTermHolder::getInternalTerm() const {
   return term_;
 }
