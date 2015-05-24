@@ -17,6 +17,18 @@ TEST_F(PrologLifetimeTest, BeginInitializesProlog) {
   PrologLifetime::end();
 }
 
+TEST_F(PrologLifetimeTest, MultipleInitialization) {
+  PrologLifetime::begin(glob_argc, glob_argv);
+  ASSERT_TRUE(PL_is_initialised(&glob_argc, &glob_argv));
+  PrologLifetime::end();
+
+  ASSERT_FALSE(PL_is_initialised(&glob_argc, &glob_argv));
+
+  PrologLifetime::begin(glob_argc, glob_argv);
+  ASSERT_TRUE(PL_is_initialised(&glob_argc, &glob_argv));
+  PrologLifetime::end();
+}
+
 }
 
 int main(int argc, char **argv) {
