@@ -94,6 +94,11 @@ PrologTerm PrologTerm::from(term_t term) {
    return PrologVariable(term);
   case PL_STRING:
     return PrologString(term);
+  case PL_TERM:
+    if (!PL_is_list(term)) {
+      return PrologFunctor(term);
+    }
+    // Fall through.
   default:
     assert(false && "No know conversion from term type");
   }
