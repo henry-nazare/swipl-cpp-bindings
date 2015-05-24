@@ -42,6 +42,19 @@ TEST_F(PrologFunctorTest, Args) {
   ASSERT_EQ(args.at(1).asString().getStr(), "string");
 }
 
+TEST_F(PrologFunctorTest, PrintOstreamOneArg) {
+  std::stringstream ss;
+  ss << PrologFunctor("f", PrologTermVector({PrologAtom::fromString("atom")}));
+  ASSERT_EQ(ss.str(), "f(atom)");
+}
+
+TEST_F(PrologFunctorTest, PrintOstreamTwoArgs) {
+  std::stringstream ss;
+  ss << PrologFunctor("f", PrologTermVector(
+      {PrologAtom::fromString("atom"), PrologString("string")}));
+  ASSERT_EQ(ss.str(), "f(atom, \"string\")");
+}
+
 }
 
 int main(int argc, char **argv) {
