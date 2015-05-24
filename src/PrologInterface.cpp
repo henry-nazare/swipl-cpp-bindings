@@ -53,6 +53,22 @@ void PrologLifetime::end() {
 }
 
 /**
+ * PrologTerm
+ */
+PrologTerm PrologTerm::from(term_t term) {
+  switch (PL_term_type(term)) {
+  case PL_ATOM:
+    return PrologAtom(term);
+  case PL_VARIABLE:
+   return PrologVariable(term);
+  case PL_STRING:
+    return PrologString(term);
+  default:
+    assert(false && "No know conversion from term type");
+  }
+}
+
+/**
  * PrologTermHolder
  */
 PrologTermHolder::PrologTermHolder(term_t term) : term_(term) {

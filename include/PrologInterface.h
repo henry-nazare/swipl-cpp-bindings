@@ -27,6 +27,8 @@ class PrologTerm : public PrologTermHolder {
 public:
   typedef std::function<void (std::ostream&, term_t)> PrintFnTy;
 
+  static PrologTerm from(term_t term);
+
   void print(std::ostream &os) const;
 
 protected:
@@ -39,6 +41,8 @@ private:
 
 class PrologAtom : public PrologTerm {
 public:
+  PrologAtom(term_t term);
+
   static PrologAtom fromString(std::string name);
   static PrologAtom fromString(const char *name);
   static PrologAtom fromPrologAtom(atom_t atom);
@@ -46,7 +50,6 @@ public:
   std::string getAtomStr() const;
 
 protected:
-  PrologAtom(term_t term);
   PrologAtom();
 };
 
