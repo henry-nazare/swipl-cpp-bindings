@@ -50,3 +50,12 @@ protected:
   PrologAtom();
 };
 
+class PrologString : public PrologTerm {
+public:
+  PrologString(std::string string);
+  PrologString(const char *string);
+  PrologString(term_t term);
+
+  std::string getStr() const;
+};
+
