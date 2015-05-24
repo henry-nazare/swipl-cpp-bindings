@@ -58,6 +58,18 @@ void PrologLifetime::end() {
 PrologTermHolder::PrologTermHolder(term_t term) : term_(term) {
 }
 
+PrologAtom PrologTermHolder::getAsAtom() const {
+  return PrologAtom(term_);
+}
+
+PrologString PrologTermHolder::getAsString() const {
+  return PrologString(term_);
+}
+
+PrologVariable PrologTermHolder::getAsVariable() const {
+  return PrologVariable(term_);
+}
+
 term_t PrologTermHolder::getInternalTerm() const {
   return term_;
 }

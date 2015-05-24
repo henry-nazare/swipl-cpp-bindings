@@ -4,6 +4,10 @@
 
 #include <ostream>
 
+class PrologAtom;
+class PrologString;
+class PrologVariable;
+
 class PrologLifetime {
 public:
   static void begin(int argc, char *argv[]);
@@ -13,6 +17,10 @@ public:
 class PrologTermHolder {
 public:
   PrologTermHolder(term_t term);
+
+  PrologAtom getAsAtom() const;
+  PrologString getAsString() const;
+  PrologVariable getAsVariable() const;
 
   term_t getInternalTerm() const;
 
@@ -39,6 +47,8 @@ private:
 
 class PrologAtom : public PrologTerm {
 public:
+  PrologAtom(term_t term);
+
   static PrologAtom fromString(std::string name);
   static PrologAtom fromString(const char *name);
   static PrologAtom fromPrologAtom(atom_t atom);
@@ -46,7 +56,6 @@ public:
   std::string getAtomStr() const;
 
 protected:
-  PrologAtom(term_t term);
   PrologAtom();
 };
 
