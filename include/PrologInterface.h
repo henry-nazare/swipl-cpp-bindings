@@ -105,3 +105,16 @@ public:
   PrologTermVector args() const;
 };
 
+class PrologQuery {
+public:
+  PrologQuery(std::string predicate, PrologTermVector terms);
+  PrologQuery(const char *predicate, PrologTermVector terms);
+  PrologQuery(PrologFunctor functor);
+
+  void apply(std::function<void (PrologTermVector)> function);
+
+private:
+  qid_t qid_;
+  PrologTermVector terms_;
+};
+

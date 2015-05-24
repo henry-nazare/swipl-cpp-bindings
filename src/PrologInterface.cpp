@@ -278,3 +278,28 @@ PrologTermVector PrologFunctor::args() const {
   return PrologTermVector(args);
 }
 
+/**
+ * PrologQuery
+ */
+PrologQuery::PrologQuery(std::string predicate, PrologTermVector terms)
+    : PrologQuery(predicate.c_str(), terms) {
+}
+
+PrologQuery::PrologQuery(const char *predicate, PrologTermVector terms)
+    : terms_(terms) {
+  predicate_t pred = PL_predicate(predicate, terms.size(), "user");
+  qid_ =
+    PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms.getInternalTerm());
+}
+
+PrologQuery::PrologQuery(PrologFunctor functor)
+    : PrologQuery(functor.name(), functor.args()) {
+}
+
+void PrologQuery::apply(std::function<void (PrologTermVector term)> function) {
+  while (PL_next_solution(qid_)) {
+    function(terms_);
+  }
+  PL_cut_query(qid_);
+}
+
