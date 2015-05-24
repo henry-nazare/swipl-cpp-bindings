@@ -39,6 +39,17 @@ static PrologTerm::PrintFnTy GetVariablePrintFn() {
   };
 }
 
+static PrologTerm::PrintFnTy GetTermPrintFn(size_t size) {
+  return [size](std::ostream &os, term_t term) {
+    for (unsigned i = 0; i < size; ++i) {
+      if (i > 0) {
+        os << ", ";
+      }
+      os << PrologTerm::from(term + i);
+    }
+  };
+}
+
 /**
  * PrologLifetime
  */
@@ -164,5 +175,41 @@ PrologVariable::PrologVariable()
 
 PrologVariable::PrologVariable(term_t term)
     : PrologTerm(term, GetVariablePrintFn()) {
+}
+
+/**
+ * PrologTermVector
+ */
+PrologTermVector::PrologTermVector(size_t size)
+    : PrologTerm(PL_new_term_refs(size), GetTermPrintFn(size)), size_(size) {
+  term_t terms = getInternalTerm();
+  for (unsigned i = 0; i < size_; ++i) {
+    assert(PL_put_variable(terms + i));
+  }
+}
+
+PrologTermVector::PrologTermVector(std::initializer_list<PrologTerm> args)
+    : PrologTermVector(std::vector<PrologTerm>(args)) {
+}
+
+PrologTermVector::PrologTermVector(std::vector<PrologTerm> args)
+    : PrologTermVector(args.size()) {
+  term_t terms = getInternalTerm();
+  for (unsigned i = 0; i < size_; ++i) {
+    assert(PL_put_term(terms + i, args[i].getInternalTerm()));
+  }
+}
+
+PrologTermVector::PrologTermVector(term_t term, size_t size)
+    : PrologTerm(term, GetTermPrintFn(size)), size_(size) {
+}
+
+size_t PrologTermVector::size() const {
+  return size_;
+}
+
+PrologTermHolder PrologTermVector::at(size_t idx) const {
+  assert(idx < size());
+  return PrologTermHolder(getInternalTerm() + idx);
 }
 

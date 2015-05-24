@@ -34,4 +34,5 @@ add_gtest_test(PrologTermTest)
 add_gtest_test(PrologAtomTest)
 add_gtest_test(PrologStringTest)
 add_gtest_test(PrologVariableTest)
+add_gtest_test(PrologTermVectorTest)
 
