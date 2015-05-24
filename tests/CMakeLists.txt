@@ -30,4 +30,5 @@ function(add_gtest_test PREFIX)
 endfunction()
 
 add_gtest_test(PrologLifetimeTest)
+add_gtest_test(PrologAtomTest)
 

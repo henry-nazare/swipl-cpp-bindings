@@ -1,8 +1,22 @@
 #include "PrologInterface.h"
 
+#include <cassert>
+
 std::ostream &operator<<(std::ostream &os, const PrologTerm &term) {
   term.print(os);
   return os;
+}
+
+static const char *GetPrologTermAtomStr(term_t term) {
+  char *s;
+  assert(PL_get_chars(term, &s, CVT_ATOM));
+  return s;
+}
+
+static PrologTerm::PrintFnTy GetAtomPrintFn() {
+  return [](std::ostream &os, term_t term) {
+    os << GetPrologTermAtomStr(term);
+  };
 }
 
 /**
@@ -41,5 +55,34 @@ PrologTerm::PrologTerm(term_t term, PrintFnTy printFn)
 
 void PrologTerm::print(std::ostream &os) const {
   printer_(os, term_);
+}
+
+/**
+ * PrologAtom
+ */
+PrologAtom::PrologAtom(term_t term)
+    : PrologTerm(term, GetAtomPrintFn()) {
+}
+
+PrologAtom::PrologAtom()
+    : PrologTerm(GetAtomPrintFn()) {
+}
+
+PrologAtom PrologAtom::fromString(std::string name) {
+  return fromString(name.c_str());
+}
+
+PrologAtom PrologAtom::fromString(const char *name) {
+  return fromPrologAtom(PL_new_atom(name));
+}
+
+PrologAtom PrologAtom::fromPrologAtom(atom_t atom) {
+  PrologAtom patom;
+  assert(PL_put_atom(patom.getInternalTerm(), atom));
+  return patom;
+}
+
+std::string PrologAtom::getAtomStr() const {
+  return GetPrologTermAtomStr(getInternalTerm());
 }
 

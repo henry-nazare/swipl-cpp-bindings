@@ -37,3 +37,16 @@ private:
   PrintFnTy printer_;
 };
 
+class PrologAtom : public PrologTerm {
+public:
+  static PrologAtom fromString(std::string name);
+  static PrologAtom fromString(const char *name);
+  static PrologAtom fromPrologAtom(atom_t atom);
+
+  std::string getAtomStr() const;
+
+protected:
+  PrologAtom(term_t term);
+  PrologAtom();
+};
+
