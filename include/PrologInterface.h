@@ -95,3 +95,13 @@ private:
   size_t size_;
 };
 
+class PrologFunctor : public PrologTerm {
+public:
+  PrologFunctor(std::string name, PrologTermVector args);
+  PrologFunctor(term_t term);
+
+  std::string name() const;
+  size_t arity() const;
+  PrologTermVector args() const;
+};
+

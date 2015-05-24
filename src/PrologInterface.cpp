@@ -50,6 +50,26 @@ static PrologTerm::PrintFnTy GetTermPrintFn(size_t size) {
   };
 }
 
+static PrologTerm::PrintFnTy GetFunctorPrintFn() {
+  return [](std::ostream &os, term_t term) {
+    term_t tmp = PL_new_term_ref();
+
+    atom_t name;
+    int arity;
+    assert(PL_get_name_arity(term, &name, &arity));
+    os << PL_atom_chars(name) << "(";
+
+    for (unsigned i = 1; i <= arity; ++i) {
+      assert(PL_get_arg(i, term, tmp));
+      if (i > 1) {
+        os << ", ";
+      }
+      os << PrologTerm::from(tmp);
+    }
+    os << ")";
+  };
+}
+
 /**
  * PrologLifetime
  */
@@ -211,5 +231,45 @@ size_t PrologTermVector::size() const {
 PrologTermHolder PrologTermVector::at(size_t idx) const {
   assert(idx < size());
   return PrologTermHolder(getInternalTerm() + idx);
+}
+
+/**
+ * PrologFunctor
+ */
+PrologFunctor::PrologFunctor(std::string name, PrologTermVector args)
+    : PrologTerm(GetFunctorPrintFn()) {
+  assert(PL_cons_functor_v(
+      getInternalTerm(),
+      PL_new_functor(PL_new_atom(name.c_str()), args.size()),
+      args.getInternalTerm()));
+}
+
+PrologFunctor::PrologFunctor(term_t term)
+    : PrologTerm(term, GetFunctorPrintFn()) {
+}
+
+std::string PrologFunctor::name() const {
+  atom_t name;
+  int arity;
+  assert(PL_get_name_arity(getInternalTerm(), &name, &arity));
+  return PL_atom_chars(name);
+}
+
+size_t PrologFunctor::arity() const {
+  atom_t name;
+  int arity;
+  assert(PL_get_name_arity(getInternalTerm(), &name, &arity));
+  return arity;
+}
+
+PrologTermVector PrologFunctor::args() const {
+  size_t len = arity();
+  std::vector<PrologTerm> args;
+  for (unsigned i = 1; i <= len; ++i) {
+    term_t tmp = PL_new_term_ref();
+    assert(PL_get_arg(i, getInternalTerm(), tmp));
+    args.push_back(PrologTerm::from(tmp));
+  }
+  return PrologTermVector(args);
 }
 
