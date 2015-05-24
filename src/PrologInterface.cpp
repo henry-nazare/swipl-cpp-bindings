@@ -7,6 +7,6 @@ void PrologLifetime::begin(int argc, char *argv[]) {
 }
 
 void PrologLifetime::end() {
-  PL_halt(EXIT_SUCCESS);
+  PL_cleanup(EXIT_SUCCESS);
 }
 
