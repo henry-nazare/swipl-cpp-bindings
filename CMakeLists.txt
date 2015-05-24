@@ -4,6 +4,7 @@ project(swipl_cpp)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
+include(CTest)
 include(SPCFindCPP11)
 include(SPCFindSWIProlog)
 
@@ -21,4 +22,5 @@ add_library(swiplcpp SHARED src/PrologInterface.cpp)
 target_link_libraries(swiplcpp swipl)
 
 add_subdirectory("ext/gtest/")
+add_subdirectory("tests/")
 
