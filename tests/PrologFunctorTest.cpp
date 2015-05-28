@@ -20,21 +20,18 @@ class PrologFunctorTest : public ::testing::Test {
 };
 
 TEST_F(PrologFunctorTest, Arity) {
-  PrologFunctor functor(
-      "f", PrologTermVector({PrologAtom::fromString("atom")}));
+  PrologFunctor functor("f", PrologTermVector({PrologAtom("atom")}));
   ASSERT_EQ(functor.arity(), 1);
 }
 
 TEST_F(PrologFunctorTest, Name) {
-  PrologFunctor functor(
-      "f", PrologTermVector({PrologAtom::fromString("atom")}));
+  PrologFunctor functor("f", PrologTermVector({PrologAtom("atom")}));
   ASSERT_EQ(functor.name(), "f");
 }
 
 TEST_F(PrologFunctorTest, Args) {
   PrologFunctor functor(
-      "f", PrologTermVector(
-          {PrologAtom::fromString("atom"), PrologString("string")}));
+      "f", PrologTermVector({PrologAtom("atom"), PrologString("string")}));
   PrologTermVector args = functor.args();
   ASSERT_EQ(functor.arity(), 2);
   ASSERT_EQ(args.size(), 2);
@@ -44,14 +41,14 @@ TEST_F(PrologFunctorTest, Args) {
 
 TEST_F(PrologFunctorTest, PrintOstreamOneArg) {
   std::stringstream ss;
-  ss << PrologFunctor("f", PrologTermVector({PrologAtom::fromString("atom")}));
+  ss << PrologFunctor("f", PrologTermVector({PrologAtom("atom")}));
   ASSERT_EQ(ss.str(), "f(atom)");
 }
 
 TEST_F(PrologFunctorTest, PrintOstreamTwoArgs) {
   std::stringstream ss;
   ss << PrologFunctor("f", PrologTermVector(
-      {PrologAtom::fromString("atom"), PrologString("string")}));
+{PrologAtom("atom"), PrologString("string")}));
   ASSERT_EQ(ss.str(), "f(atom, \"string\")");
 }
 

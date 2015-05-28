@@ -20,12 +20,12 @@ class PrologAtomTest : public ::testing::Test {
 };
 
 TEST_F(PrologAtomTest, FromCharString) {
-  PrologAtom atom = PrologAtom::fromString("atom");
+  PrologAtom atom = PrologAtom("atom");
   ASSERT_EQ(atom.getAtomStr(), "atom");
 }
 
 TEST_F(PrologAtomTest, FromStdString) {
-  PrologAtom atom = PrologAtom::fromString(std::string("atom"));
+  PrologAtom atom = PrologAtom(std::string("atom"));
   ASSERT_EQ(atom.getAtomStr(), "atom");
 }
 
@@ -36,7 +36,7 @@ TEST_F(PrologAtomTest, FromPrologAtom) {
 
 TEST_F(PrologAtomTest, PrintOstream) {
   std::stringstream ss;
-  ss << PrologAtom::fromString("atom");
+  ss << PrologAtom("atom");
   ASSERT_EQ(ss.str(), "atom");
 }
 

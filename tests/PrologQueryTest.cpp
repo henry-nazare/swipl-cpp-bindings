@@ -9,16 +9,16 @@ static char **glob_argv;
 
 static void addTestFacts() {
   PrologQuery
-      ("assert", {PrologFunctor("test", {PrologAtom::fromString("a")})})
+      ("assert", {PrologFunctor("test", {PrologAtom("a")})})
       .apply([](PrologTermVector){});
   PrologQuery
-      ("assert", {PrologFunctor("test", {PrologAtom::fromString("b")})})
+      ("assert", {PrologFunctor("test", {PrologAtom("b")})})
       .apply([](PrologTermVector){});
 }
 
 static int getNumFactsForAtom(const char *name) {
   int solutions = 0;
-  PrologQuery("test", {PrologAtom::fromString(name)})
+  PrologQuery("test", {PrologAtom(name)})
       .apply([&](PrologTermVector) {
         solutions = solutions + 1;
       });

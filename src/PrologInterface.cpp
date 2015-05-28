@@ -144,20 +144,21 @@ void PrologTerm::print(std::ostream &os) const {
 /**
  * PrologAtom
  */
+PrologAtom::PrologAtom(std::string name)
+    : PrologAtom(name.c_str()) {
+}
+
+PrologAtom::PrologAtom(const char *name)
+    : PrologTerm(GetAtomPrintFn()) {
+  assert(PL_put_atom(getInternalTerm(), PL_new_atom(name)));
+}
+
 PrologAtom::PrologAtom(term_t term)
     : PrologTerm(term, GetAtomPrintFn()) {
 }
 
 PrologAtom::PrologAtom()
     : PrologTerm(GetAtomPrintFn()) {
-}
-
-PrologAtom PrologAtom::fromString(std::string name) {
-  return fromString(name.c_str());
-}
-
-PrologAtom PrologAtom::fromString(const char *name) {
-  return fromPrologAtom(PL_new_atom(name));
 }
 
 PrologAtom PrologAtom::fromPrologAtom(atom_t atom) {
@@ -317,7 +318,7 @@ void PrologCall::fact(PrologTerm term) {
 
 void PrologCall::consult(const char *filename) {
   PrologQuery query(
-      "consult", PrologTermVector({PrologAtom::fromString(filename)}));
+      "consult", PrologTermVector({PrologAtom(filename)}));
   query.apply([](PrologTermVector) {});
 }
 

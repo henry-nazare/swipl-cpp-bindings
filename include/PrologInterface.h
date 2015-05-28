@@ -51,10 +51,10 @@ private:
 
 class PrologAtom : public PrologTerm {
 public:
+  PrologAtom(std::string name);
+  PrologAtom(const char *name);
   PrologAtom(term_t term);
 
-  static PrologAtom fromString(std::string name);
-  static PrologAtom fromString(const char *name);
   static PrologAtom fromPrologAtom(atom_t atom);
 
   std::string getAtomStr() const;

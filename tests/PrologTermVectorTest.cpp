@@ -33,8 +33,7 @@ TEST_F(PrologTermVectorTest, UninitializedVector) {
 }
 
 TEST_F(PrologTermVectorTest, InitializedVector) {
-  PrologTermVector vector(
-      {PrologAtom::fromString("atom"), PrologString("string")});
+  PrologTermVector vector({PrologAtom("atom"), PrologString("string")});
   ASSERT_EQ(vector.size(), 2);
   std::stringstream ss;
   ss << vector.at(0).asAtom() << ", " << vector.at(1).asString();
