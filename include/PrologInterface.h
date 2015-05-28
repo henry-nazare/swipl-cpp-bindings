@@ -24,7 +24,7 @@ public:
   PrologString asString() const;
   PrologVariable asVariable() const;
 
-  term_t getInternalTerm() const;
+  term_t term() const;
 
 protected:
    term_t term_;

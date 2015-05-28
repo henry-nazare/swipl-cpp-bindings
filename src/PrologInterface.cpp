@@ -122,7 +122,7 @@ PrologVariable PrologTermHolder::asVariable() const {
   return PrologVariable(term_);
 }
 
-term_t PrologTermHolder::getInternalTerm() const {
+term_t PrologTermHolder::term() const {
   return term_;
 }
 
@@ -150,7 +150,7 @@ PrologAtom::PrologAtom(std::string name)
 
 PrologAtom::PrologAtom(const char *name)
     : PrologTerm(GetAtomPrintFn()) {
-  assert(PL_put_atom(getInternalTerm(), PL_new_atom(name)));
+  assert(PL_put_atom(term(), PL_new_atom(name)));
 }
 
 PrologAtom::PrologAtom(term_t term)
@@ -163,12 +163,12 @@ PrologAtom::PrologAtom()
 
 PrologAtom PrologAtom::fromPrologAtom(atom_t atom) {
   PrologAtom patom;
-  assert(PL_put_atom(patom.getInternalTerm(), atom));
+  assert(PL_put_atom(patom.term(), atom));
   return patom;
 }
 
 std::string PrologAtom::getAtomStr() const {
-  return GetPrologTermAtomStr(getInternalTerm());
+  return GetPrologTermAtomStr(term());
 }
 
 /**
@@ -180,7 +180,7 @@ PrologString::PrologString(std::string string)
 
 PrologString::PrologString(const char *string)
     : PrologTerm(GetStringPrintFn()) {
-  assert(PL_put_string_chars(getInternalTerm(), string));
+  assert(PL_put_string_chars(term(), string));
 }
 
 PrologString::PrologString(term_t term)
@@ -188,7 +188,7 @@ PrologString::PrologString(term_t term)
 }
 
 std::string PrologString::getStr() const {
-  return GetPrologTermStringStr(getInternalTerm());
+  return GetPrologTermStringStr(term());
 }
 
 /**
@@ -196,7 +196,7 @@ std::string PrologString::getStr() const {
  */
 PrologVariable::PrologVariable()
     : PrologTerm(GetVariablePrintFn()) {
-  PL_put_variable(getInternalTerm());
+  PL_put_variable(term());
 }
 
 PrologVariable::PrologVariable(term_t term)
@@ -208,7 +208,7 @@ PrologVariable::PrologVariable(term_t term)
  */
 PrologTermVector::PrologTermVector(size_t size)
     : PrologTerm(PL_new_term_refs(size), GetTermPrintFn(size)), size_(size) {
-  term_t terms = getInternalTerm();
+  term_t terms = term();
   for (unsigned i = 0; i < size_; ++i) {
     assert(PL_put_variable(terms + i));
   }
@@ -220,9 +220,9 @@ PrologTermVector::PrologTermVector(std::initializer_list<PrologTerm> args)
 
 PrologTermVector::PrologTermVector(std::vector<PrologTerm> args)
     : PrologTermVector(args.size()) {
-  term_t terms = getInternalTerm();
+  term_t terms = term();
   for (unsigned i = 0; i < size_; ++i) {
-    assert(PL_put_term(terms + i, args[i].getInternalTerm()));
+    assert(PL_put_term(terms + i, args[i].term()));
   }
 }
 
@@ -236,7 +236,7 @@ size_t PrologTermVector::size() const {
 
 PrologTermHolder PrologTermVector::at(size_t idx) const {
   assert(idx < size());
-  return PrologTermHolder(getInternalTerm() + idx);
+  return PrologTermHolder(term() + idx);
 }
 
 /**
@@ -245,9 +245,9 @@ PrologTermHolder PrologTermVector::at(size_t idx) const {
 PrologFunctor::PrologFunctor(std::string name, PrologTermVector args)
     : PrologTerm(GetFunctorPrintFn()) {
   assert(PL_cons_functor_v(
-      getInternalTerm(),
+      term(),
       PL_new_functor(PL_new_atom(name.c_str()), args.size()),
-      args.getInternalTerm()));
+      args.term()));
 }
 
 PrologFunctor::PrologFunctor(term_t term)
@@ -257,14 +257,14 @@ PrologFunctor::PrologFunctor(term_t term)
 std::string PrologFunctor::name() const {
   atom_t name;
   int arity;
-  assert(PL_get_name_arity(getInternalTerm(), &name, &arity));
+  assert(PL_get_name_arity(term(), &name, &arity));
   return PL_atom_chars(name);
 }
 
 size_t PrologFunctor::arity() const {
   atom_t name;
   int arity;
-  assert(PL_get_name_arity(getInternalTerm(), &name, &arity));
+  assert(PL_get_name_arity(term(), &name, &arity));
   return arity;
 }
 
@@ -273,7 +273,7 @@ PrologTermVector PrologFunctor::args() const {
   std::vector<PrologTerm> args;
   for (unsigned i = 1; i <= len; ++i) {
     term_t tmp = PL_new_term_ref();
-    assert(PL_get_arg(i, getInternalTerm(), tmp));
+    assert(PL_get_arg(i, term(), tmp));
     args.push_back(PrologTerm::from(tmp));
   }
   return PrologTermVector(args);
@@ -290,7 +290,7 @@ PrologQuery::PrologQuery(const char *predicate, PrologTermVector terms)
     : terms_(terms) {
   predicate_t pred = PL_predicate(predicate, terms.size(), "user");
   qid_ =
-    PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms.getInternalTerm());
+    PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms.term());
 }
 
 PrologQuery::PrologQuery(PrologFunctor functor)
