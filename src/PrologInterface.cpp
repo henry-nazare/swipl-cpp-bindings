@@ -167,7 +167,7 @@ PrologAtom PrologAtom::fromPrologAtom(atom_t atom) {
   return patom;
 }
 
-std::string PrologAtom::getAtomStr() const {
+std::string PrologAtom::str() const {
   return GetPrologTermAtomStr(term());
 }
 
@@ -187,7 +187,7 @@ PrologString::PrologString(term_t term)
     : PrologTerm(term, GetStringPrintFn()) {
 }
 
-std::string PrologString::getStr() const {
+std::string PrologString::str() const {
   return GetPrologTermStringStr(term());
 }
 

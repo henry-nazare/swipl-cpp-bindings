@@ -35,8 +35,8 @@ TEST_F(PrologFunctorTest, Args) {
   PrologTermVector args = functor.args();
   ASSERT_EQ(functor.arity(), 2);
   ASSERT_EQ(args.size(), 2);
-  ASSERT_EQ(args.at(0).asAtom().getAtomStr(), "atom");
-  ASSERT_EQ(args.at(1).asString().getStr(), "string");
+  ASSERT_EQ(args.at(0).asAtom().str(), "atom");
+  ASSERT_EQ(args.at(1).asString().str(), "string");
 }
 
 TEST_F(PrologFunctorTest, PrintOstreamOneArg) {

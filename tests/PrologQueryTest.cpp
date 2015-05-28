@@ -47,8 +47,7 @@ TEST_F(PrologQueryTest, AddAndRetrieveFacts) {
   int solutions = 0;
   PrologQuery("test", {x})
       .apply([&](PrologTermVector) {
-        ASSERT_TRUE((x.asAtom().getAtomStr() == "a")
-            || (x.asAtom().getAtomStr() == "b"));
+        ASSERT_TRUE((x.asAtom().str() == "a") || (x.asAtom().str() == "b"));
         solutions = solutions + 1;
       });
   ASSERT_EQ(solutions, 2);

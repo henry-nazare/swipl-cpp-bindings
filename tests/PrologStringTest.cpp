@@ -21,19 +21,19 @@ class PrologStringTest : public ::testing::Test {
 
 TEST_F(PrologStringTest, FromCharString) {
   PrologString string("string");
-  ASSERT_EQ(string.getStr(), "string");
+  ASSERT_EQ(string.str(), "string");
 }
 
 TEST_F(PrologStringTest, FromStdString) {
   PrologString string(std::string("string"));
-  ASSERT_EQ(string.getStr(), "string");
+  ASSERT_EQ(string.str(), "string");
 }
 
 TEST_F(PrologStringTest, FromPrologString) {
   term_t term = PL_new_term_ref();
   ASSERT_TRUE(PL_put_string_chars(term, "string"));
   PrologString string(term);
-  ASSERT_EQ(string.getStr(), "string");
+  ASSERT_EQ(string.str(), "string");
 }
 
 TEST_F(PrologStringTest, PrintOstream) {

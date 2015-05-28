@@ -57,7 +57,7 @@ public:
 
   static PrologAtom fromPrologAtom(atom_t atom);
 
-  std::string getAtomStr() const;
+  std::string str() const;
 
 protected:
   PrologAtom();
@@ -69,7 +69,7 @@ public:
   PrologString(const char *string);
   PrologString(term_t term);
 
-  std::string getStr() const;
+  std::string str() const;
 };
 
 class PrologVariable : public PrologTerm {

@@ -21,17 +21,17 @@ class PrologAtomTest : public ::testing::Test {
 
 TEST_F(PrologAtomTest, FromCharString) {
   PrologAtom atom = PrologAtom("atom");
-  ASSERT_EQ(atom.getAtomStr(), "atom");
+  ASSERT_EQ(atom.str(), "atom");
 }
 
 TEST_F(PrologAtomTest, FromStdString) {
   PrologAtom atom = PrologAtom(std::string("atom"));
-  ASSERT_EQ(atom.getAtomStr(), "atom");
+  ASSERT_EQ(atom.str(), "atom");
 }
 
 TEST_F(PrologAtomTest, FromPrologAtom) {
   PrologAtom atom = PrologAtom::fromPrologAtom(PL_new_atom("atom"));
-  ASSERT_EQ(atom.getAtomStr(), "atom");
+  ASSERT_EQ(atom.str(), "atom");
 }
 
 TEST_F(PrologAtomTest, PrintOstream) {
