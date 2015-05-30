@@ -114,7 +114,7 @@ public:
   void apply(std::function<void (PrologTermVector)> function);
 
 private:
-  qid_t qid_;
+  const char *predicate_;
   PrologTermVector terms_;
 };
 

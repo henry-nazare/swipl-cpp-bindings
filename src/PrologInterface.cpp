@@ -287,10 +287,7 @@ PrologQuery::PrologQuery(std::string predicate, PrologTermVector terms)
 }
 
 PrologQuery::PrologQuery(const char *predicate, PrologTermVector terms)
-    : terms_(terms) {
-  predicate_t pred = PL_predicate(predicate, terms.size(), "user");
-  qid_ =
-    PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms.term());
+    : predicate_(predicate), terms_(terms) {
 }
 
 PrologQuery::PrologQuery(PrologFunctor functor)
@@ -298,10 +295,13 @@ PrologQuery::PrologQuery(PrologFunctor functor)
 }
 
 void PrologQuery::apply(std::function<void (PrologTermVector term)> function) {
-  while (PL_next_solution(qid_)) {
+  predicate_t pred = PL_predicate(predicate_, terms_.size(), "user");
+  qid_t qid =
+    PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms_.term());
+  while (PL_next_solution(qid)) {
     function(terms_);
   }
-  PL_cut_query(qid_);
+  PL_cut_query(qid);
 }
 
 /**

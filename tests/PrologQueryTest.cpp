@@ -60,6 +60,23 @@ TEST_F(PrologQueryTest, AddAndVerifyFacts) {
   ASSERT_EQ(getNumFactsForAtom("c"), 0);
 }
 
+TEST_F(PrologQueryTest, AddAndQueryOverlappingLifetimes) {
+  addTestFacts();
+  PrologVariable x;
+  int solutions = 0;
+  PrologQuery q1("test", {x}), q2("test", {x});
+  q1.apply([&](PrologTermVector) {
+    ASSERT_TRUE((x.asAtom().str() == "a") || (x.asAtom().str() == "b"));
+    solutions = solutions + 1;
+  });
+  ASSERT_EQ(solutions, 2);
+  q2.apply([&](PrologTermVector) {
+    ASSERT_TRUE((x.asAtom().str() == "a") || (x.asAtom().str() == "b"));
+    solutions = solutions + 1;
+  });
+  ASSERT_EQ(solutions, 4);
+}
+
 }
 
 int main(int argc, char **argv) {
