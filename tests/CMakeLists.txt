@@ -37,6 +37,7 @@ add_gtest_test(PrologVariableTest)
 add_gtest_test(PrologListTest)
 add_gtest_test(PrologTermVectorTest)
 add_gtest_test(PrologFunctorTest)
+add_gtest_test(PrologConjunctionTest)
 add_gtest_test(PrologQueryTest)
 add_gtest_test(PrologCallTest)
 

@@ -114,6 +114,11 @@ public:
   PrologTermVector args() const;
 };
 
+class PrologConjunction : public PrologFunctor {
+public:
+  PrologConjunction(PrologList args);
+};
+
 class PrologQuery {
 public:
   PrologQuery(std::string predicate, PrologTermVector terms);

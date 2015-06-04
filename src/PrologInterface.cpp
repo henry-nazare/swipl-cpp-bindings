@@ -92,6 +92,7 @@ void PrologLifetime::begin(int argc, char *argv[]) {
     PL_halt(EXIT_FAILURE);
   }
   PrologCall::consult(SPC_PROLOG_DEFS_DIR "/lifetime_defs.pl");
+  PrologCall::consult(SPC_PROLOG_DEFS_DIR "/conjunction_defs.pl");
 }
 
 void PrologLifetime::end() {
@@ -312,6 +313,13 @@ PrologTermVector PrologFunctor::args() const {
     args.push_back(PrologTerm::from(tmp));
   }
   return PrologTermVector(args);
+}
+
+/**
+ * PrologConjunction
+ */
+PrologConjunction::PrologConjunction(PrologList args)
+    : PrologFunctor("conjunction", PrologTermVector{args}) {
 }
 
 /**
