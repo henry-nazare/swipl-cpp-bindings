@@ -138,6 +138,10 @@ PrologVariable PrologTermHolder::asVariable() const {
   return PrologVariable(term_);
 }
 
+PrologList PrologTermHolder::asList() const {
+  return PrologList(term_);
+}
+
 PrologFunctor PrologTermHolder::asFunctor() const {
   return PrologFunctor(term_);
 }

@@ -10,6 +10,7 @@
 class PrologAtom;
 class PrologString;
 class PrologVariable;
+class PrologList;
 class PrologFunctor;
 
 class PrologLifetime {
@@ -25,6 +26,7 @@ public:
   PrologAtom asAtom() const;
   PrologString asString() const;
   PrologVariable asVariable() const;
+  PrologList asList() const;
   PrologFunctor asFunctor() const;
 
   term_t term() const;
