@@ -14,7 +14,7 @@ endif()
 
 include_directories("${SPC_SWIPL_INCLUDE_DIRS}")
 
-add_definitions("${SPC_SWIPL_DEFS}")
+add_definitions("${SPC_SWIPL_DEFS}" -DSPC_PROLOG_DEFS_DIR="${CMAKE_SOURCE_DIR}/prolog")
 link_directories("${SPC_SWIPL_LINK_DIR}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SPC_CPP11_FLAGS} ${SPC_SWIPL_CXX_FLAGS} -Wall")
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")

@@ -91,6 +91,7 @@ void PrologLifetime::begin(int argc, char *argv[]) {
   if (!PL_initialise(argc, argv)) {
     PL_halt(EXIT_FAILURE);
   }
+  PrologCall::consult(SPC_PROLOG_DEFS_DIR "/lifetime_defs.pl");
 }
 
 void PrologLifetime::end() {
