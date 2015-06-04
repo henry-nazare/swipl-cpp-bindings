@@ -353,3 +353,10 @@ void PrologCall::consult(const char *filename) {
   query.apply([](PrologTermVector) {});
 }
 
+void PrologCall::compile(const char *descriptor, std::string program) {
+  PrologQuery query(
+      "compile_string",
+      PrologTermVector({PrologAtom(descriptor), PrologString(program)}));
+  query.apply([](PrologTermVector) {});
+}
+

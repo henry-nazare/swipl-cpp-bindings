@@ -4,6 +4,7 @@
 
 #include <initializer_list>
 #include <ostream>
+#include <string>
 #include <vector>
 
 class PrologAtom;
@@ -130,5 +131,6 @@ public:
   static void run(PrologFunctor funcor);
   static void fact(PrologTerm term);
   static void consult(const char *filename);
+  static void compile(const char *descriptor, std::string program);
 };
 
