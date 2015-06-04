@@ -80,6 +80,12 @@ public:
   PrologVariable(term_t term);
 };
 
+class PrologList : public PrologTerm {
+public:
+  PrologList(std::vector<PrologTerm> terms);
+  PrologList(term_t term);
+};
+
 class PrologTermVector : public PrologTerm {
 public:
   PrologTermVector(size_t size);

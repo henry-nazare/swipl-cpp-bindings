@@ -39,6 +39,20 @@ static PrologTerm::PrintFnTy GetVariablePrintFn() {
   };
 }
 
+static PrologTerm::PrintFnTy GetListPrintFn() {
+  return [](std::ostream &os, term_t term) {
+    term_t list = PL_copy_term_ref(term);
+    term_t head = PL_new_term_ref();
+    os << "[";
+    bool isListNil = PL_unify_nil(list);
+    while (!isListNil && PL_unify_list(list, head, list)) {
+      isListNil = PL_unify_nil(list);
+      os <<  PrologTerm::from(head) << (isListNil ? "" : ", ");
+    }
+    os << "]";
+  };
+}
+
 static PrologTerm::PrintFnTy GetTermPrintFn(size_t size) {
   return [size](std::ostream &os, term_t term) {
     for (unsigned i = 0; i < size; ++i) {
@@ -98,7 +112,7 @@ PrologTerm PrologTerm::from(term_t term) {
     if (!PL_is_list(term)) {
       return PrologFunctor(term);
     }
-    // Fall through.
+    return PrologList(term);
   default:
     assert(false && "No know conversion from term type");
   }
@@ -205,6 +219,22 @@ PrologVariable::PrologVariable()
 
 PrologVariable::PrologVariable(term_t term)
     : PrologTerm(term, GetVariablePrintFn()) {
+}
+
+/**
+ * PrologList
+ */
+PrologList::PrologList(std::vector<PrologTerm> terms)
+    : PrologTerm(GetListPrintFn()) {
+  term_t head = term();
+  PL_put_nil(head);
+  for (auto it = terms.rbegin(), e = terms.rend(); it != e; ++it) {
+    assert(PL_cons_list(head, (*it).term(), head));
+  }
+}
+
+PrologList::PrologList(term_t term)
+    : PrologTerm(term, GetListPrintFn()) {
 }
 
 /**
