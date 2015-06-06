@@ -2,7 +2,11 @@
 
 #include "PrologInterface.h"
 
+#include "TestCommon.h"
+
 #include <sstream>
+
+using namespace testcommon;
 
 static int glob_argc;
 static char **glob_argv;
@@ -21,29 +25,17 @@ class PrologCallTest : public ::testing::Test {
 
 TEST_F(PrologCallTest, Compile) {
   PrologCall::compile("test", "test(x). test(y). test(z).");
-  int solutions = 0;
-  PrologQuery("test", PrologTermVector({PrologVariable()}))
-      .apply([&](PrologTermVector) {
-        solutions = solutions + 1;
-      });
-  ASSERT_EQ(solutions, 3);
+  PrologFunctor query("test", PrologTermVector({PrologVariable()}));
+  ASSERT_EQ(numSolutionsFor(query), 3);
 }
 
 TEST_F(PrologCallTest, CompileMultiple) {
   PrologCall::compile("test", "test(x). test(y). test(z).");
   PrologCall::compile("foo", "foo(x). foo(y).");
-  int solutions = 0;
-  PrologQuery("test", PrologTermVector({PrologVariable()}))
-      .apply([&](PrologTermVector) {
-        solutions = solutions + 1;
-      });
-  ASSERT_EQ(solutions, 3);
-  solutions = 0;
-  PrologQuery("foo", PrologTermVector({PrologVariable()}))
-      .apply([&](PrologTermVector) {
-        solutions = solutions + 1;
-      });
-  ASSERT_EQ(solutions, 2);
+  PrologFunctor testQuery("test", PrologTermVector({PrologVariable()}));
+  PrologFunctor fooQuery("foo", PrologTermVector({PrologVariable()}));
+  ASSERT_EQ(numSolutionsFor(testQuery), 3);
+  ASSERT_EQ(numSolutionsFor(fooQuery), 2);
 }
 
 }

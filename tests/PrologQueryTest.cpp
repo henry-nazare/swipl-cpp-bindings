@@ -2,28 +2,14 @@
 
 #include "PrologInterface.h"
 
+#include "TestCommon.h"
+
 #include <sstream>
+
+using namespace testcommon;
 
 static int glob_argc;
 static char **glob_argv;
-
-static void addTestFacts() {
-  PrologQuery
-      ("assert", {PrologFunctor("test", {PrologAtom("a")})})
-      .apply([](PrologTermVector){});
-  PrologQuery
-      ("assert", {PrologFunctor("test", {PrologAtom("b")})})
-      .apply([](PrologTermVector){});
-}
-
-static int getNumFactsForAtom(const char *name) {
-  int solutions = 0;
-  PrologQuery("test", {PrologAtom(name)})
-      .apply([&](PrologTermVector) {
-        solutions = solutions + 1;
-      });
-  return solutions;
-}
 
 namespace {
 
@@ -37,44 +23,27 @@ class PrologQueryTest : public ::testing::Test {
   }
 };
 
-TEST_F(PrologQueryTest, AddFacts) {
+TEST_F(PrologQueryTest, CountSolutionsIsAlpha) {
   addTestFacts();
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologAtom("a"))), 1);
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologAtom("b"))), 1);
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologAtom("c"))), 1);
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologAtom("d"))), 1);
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologAtom("e"))), 1);
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologAtom("f"))), 0);
+  ASSERT_EQ(numSolutionsFor(is_alpha_pred(PrologVariable())), 5);
 }
 
-TEST_F(PrologQueryTest, AddAndRetrieveFacts) {
+TEST_F(PrologQueryTest, CountSolutionsNextAlpha) {
   addTestFacts();
-  PrologVariable x;
-  int solutions = 0;
-  PrologQuery("test", {x})
-      .apply([&](PrologTermVector) {
-        ASSERT_TRUE((x.asAtom().str() == "a") || (x.asAtom().str() == "b"));
-        solutions = solutions + 1;
-      });
-  ASSERT_EQ(solutions, 2);
-}
-
-TEST_F(PrologQueryTest, AddAndVerifyFacts) {
-  addTestFacts();
-  ASSERT_EQ(getNumFactsForAtom("a"), 1);
-  ASSERT_EQ(getNumFactsForAtom("b"), 1);
-  ASSERT_EQ(getNumFactsForAtom("c"), 0);
-}
-
-TEST_F(PrologQueryTest, AddAndQueryOverlappingLifetimes) {
-  addTestFacts();
-  PrologVariable x;
-  int solutions = 0;
-  PrologQuery q1("test", {x}), q2("test", {x});
-  q1.apply([&](PrologTermVector) {
-    ASSERT_TRUE((x.asAtom().str() == "a") || (x.asAtom().str() == "b"));
-    solutions = solutions + 1;
-  });
-  ASSERT_EQ(solutions, 2);
-  q2.apply([&](PrologTermVector) {
-    ASSERT_TRUE((x.asAtom().str() == "a") || (x.asAtom().str() == "b"));
-    solutions = solutions + 1;
-  });
-  ASSERT_EQ(solutions, 4);
+  ASSERT_EQ(
+      numSolutionsFor(next_alpha_pred(PrologAtom("a"), PrologVariable())), 1);
+  ASSERT_EQ(
+      numSolutionsFor(next_alpha_pred(PrologAtom("a"), PrologAtom("b"))), 1);
+  ASSERT_EQ(
+      numSolutionsFor(next_alpha_pred(PrologAtom("a"), PrologAtom("c"))), 0);
+  ASSERT_EQ(
+      numSolutionsFor(next_alpha_pred(PrologVariable(), PrologVariable())), 4);
 }
 
 }
