@@ -3,15 +3,24 @@
 #include <SWI-Prolog.h>
 
 #include <initializer_list>
+#include <map>
 #include <ostream>
 #include <string>
 #include <vector>
 
+class PrologTermHolder;
 class PrologAtom;
 class PrologString;
 class PrologVariable;
 class PrologList;
 class PrologFunctor;
+
+namespace std {
+  template<> struct std::less<PrologTermHolder> {
+    bool operator()(
+        const PrologTermHolder& lhs, const PrologTermHolder& rhs) const;
+  };
+}
 
 class PrologLifetime {
 public:
@@ -121,12 +130,27 @@ public:
   PrologConjunction(PrologList args);
 };
 
+class PrologSolution {
+public:
+  typedef std::map<PrologTermHolder, PrologTerm> SolutionTy;
+
+  PrologSolution(SolutionTy solution);
+
+  PrologTerm get(PrologTermHolder variable) const;
+
+private:
+  SolutionTy solution_;
+};
+
 class PrologQuery {
 public:
   PrologQuery(std::string predicate, PrologTermVector terms);
   PrologQuery(PrologFunctor functor);
 
-  void apply(std::function<void (PrologTermVector)> function);
+  std::vector<PrologSolution> solutions() const;
+  std::vector<PrologSolution> solutions(PrologTermVector terms) const;
+
+  void execute() const;
 
 private:
   std::string predicate_;

@@ -31,11 +31,7 @@ void addTestFacts() {
 }
 
 int numSolutionsFor(PrologFunctor functor) {
-  int solutions = 0;
-  PrologQuery(functor).apply([&](PrologTermVector) {
-    solutions = solutions + 1;
-  });
-  return solutions;
+  return PrologQuery(functor).solutions().size();
 }
 
 }

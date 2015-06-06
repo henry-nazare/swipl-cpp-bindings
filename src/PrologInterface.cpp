@@ -2,6 +2,11 @@
 
 #include <cassert>
 
+bool std::less<PrologTermHolder>::operator()(
+    const PrologTermHolder& lhs, const PrologTermHolder& rhs) const {
+  return PL_compare(lhs.term(), rhs.term());
+}
+
 std::ostream &operator<<(std::ostream &os, const PrologTerm &term) {
   term.print(os);
   return os;
@@ -327,6 +332,19 @@ PrologConjunction::PrologConjunction(PrologList args)
 }
 
 /**
+ * PrologSolution
+ */
+PrologSolution::PrologSolution(PrologSolution::SolutionTy solution)
+    : solution_(solution) {
+}
+
+PrologTerm PrologSolution::get(PrologTermHolder variable) const {
+  auto it = solution_.find(variable);
+  assert(it != solution_.end() && "Variable does not exist in solution");
+  return it->second;
+}
+
+/**
  * PrologQuery
  */
 PrologQuery::PrologQuery(std::string predicate, PrologTermVector terms)
@@ -337,22 +355,41 @@ PrologQuery::PrologQuery(PrologFunctor functor)
     : PrologQuery(functor.name(), functor.args()) {
 }
 
-void PrologQuery::apply(std::function<void (PrologTermVector term)> function) {
+std::vector<PrologSolution> PrologQuery::solutions() const {
+  return solutions(terms_);
+}
+
+std::vector<PrologSolution> PrologQuery::solutions(
+    PrologTermVector terms) const {
   predicate_t pred = PL_predicate(predicate_.c_str(), terms_.size(), "user");
+  fid_t frame = PL_open_foreign_frame();
   qid_t qid =
     PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms_.term());
+  std::vector<PrologSolution> solutions;
   while (PL_next_solution(qid)) {
-    function(terms_);
+    PrologSolution::SolutionTy solution;
+    for (size_t i = 0; i < terms.size(); ++i) {
+      PrologTermHolder key = terms.at(i);
+      PrologTerm value =  PrologTerm::from(PL_copy_term_ref(key.term()));
+      solution.insert(std::make_pair(key, value));
+    }
+    solutions.push_back(PrologSolution(solution));
   }
   PL_cut_query(qid);
+  PL_discard_foreign_frame(frame);
+  return solutions;
+}
+
+void PrologQuery::execute() const {
+  // Execute the query and ignore solutions.
+  solutions();
 }
 
 /**
  * PrologCall
  */
 void PrologCall::run(PrologFunctor functor) {
-  PrologQuery query(functor);
-  query.apply([](PrologTermVector) {});
+  PrologQuery(functor).execute();
 }
 
 void PrologCall::fact(PrologTerm term) {
@@ -360,15 +397,13 @@ void PrologCall::fact(PrologTerm term) {
 }
 
 void PrologCall::consult(const char *filename) {
-  PrologQuery query(
-      "consult", PrologTermVector({PrologAtom(filename)}));
-  query.apply([](PrologTermVector) {});
+  PrologQuery("consult", PrologTermVector({PrologAtom(filename)})).execute();
 }
 
 void PrologCall::compile(const char *descriptor, std::string program) {
-  PrologQuery query(
+  PrologQuery(
       "compile_string",
-      PrologTermVector({PrologAtom(descriptor), PrologString(program)}));
-  query.apply([](PrologTermVector) {});
+      PrologTermVector({PrologAtom(descriptor), PrologString(program)}))
+      .execute();
 }
 
