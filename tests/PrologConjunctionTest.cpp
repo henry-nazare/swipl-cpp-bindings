@@ -25,6 +25,7 @@ class PrologConjunctionTest : public ::testing::Test {
 };
 
 TEST_F(PrologConjunctionTest, TestConjunction) {
+  addTestFacts();
   PrologVariable x, y;
   PrologFunctor query(PrologConjunction(
         PrologList({is_vowel_pred(x), next_alpha_pred(x, y)})));

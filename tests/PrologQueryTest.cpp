@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
 #include "PrologInterface.h"
 
@@ -6,6 +7,7 @@
 
 #include <sstream>
 
+using namespace testing;
 using namespace testcommon;
 
 static int glob_argc;
@@ -44,6 +46,20 @@ TEST_F(PrologQueryTest, CountSolutionsNextAlpha) {
       numSolutionsFor(next_alpha_pred(PrologAtom("a"), PrologAtom("c"))), 0);
   ASSERT_EQ(
       numSolutionsFor(next_alpha_pred(PrologVariable(), PrologVariable())), 4);
+}
+
+TEST_F(PrologQueryTest, VerifySolutionsIsAlpha) {
+  addTestFacts();
+  PrologVariable x;
+  std::vector<PrologSolution> solutions =
+      PrologQuery(is_alpha_pred(x)).solutions();
+  std::vector<std::string> alphas(solutions.size());
+  std::transform(
+      solutions.begin(), solutions.end(), alphas.begin(),
+      [&](PrologSolution solution) {
+        return solution.get(x).asAtom().str();
+      });
+  ASSERT_THAT(alphas, ElementsAre("a", "b", "c", "d", "e"));
 }
 
 }
