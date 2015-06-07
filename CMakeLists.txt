@@ -22,5 +22,6 @@ add_library(swiplcpp SHARED src/PrologInterface.cpp)
 target_link_libraries(swiplcpp swipl)
 
 add_subdirectory("ext/gtest/")
+add_subdirectory("ext/gmock/")
 add_subdirectory("tests/")
 
