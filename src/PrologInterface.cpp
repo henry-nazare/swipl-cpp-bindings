@@ -1,4 +1,5 @@
 #include "PrologInterface.h"
+#include "LazyTermBuilders.h"
 
 #include <cassert>
 
@@ -362,27 +363,41 @@ std::vector<PrologSolution> PrologQuery::solutions() const {
 std::vector<PrologSolution> PrologQuery::solutions(
     PrologTermVector terms) const {
   predicate_t pred = PL_predicate(predicate_.c_str(), terms_.size(), "user");
-  fid_t frame = PL_open_foreign_frame();
   qid_t qid =
     PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms_.term());
-  std::vector<PrologSolution> solutions;
+
+  // Since opening foreign frames still doesn't seem to allow bindings to be
+  // copied correctly, move on to the next best solution, which is just
+  // creating the terms after the query is completed.
+  std::vector<std::map<PrologTermHolder, LazyTermBuilder*>> lazySolutions;
   while (PL_next_solution(qid)) {
+    std::map<PrologTermHolder, LazyTermBuilder*> lazySolution;
+    for (unsigned i = 0; i < terms.size(); ++i) {
+      term_t var = terms.at(i).term();
+      lazySolution.insert(std::make_pair(var, LazyTermBuilder::from(var)));
+    }
+    lazySolutions.push_back(lazySolution);
+  }
+  PL_cut_query(qid);
+
+  std::vector<PrologSolution> solutions;
+  for (auto &lazySolution : lazySolutions) {
     PrologSolution::SolutionTy solution;
-    for (size_t i = 0; i < terms.size(); ++i) {
-      PrologTermHolder key = terms.at(i);
-      PrologTerm value =  PrologTerm::from(PL_copy_term_ref(key.term()));
-      solution.insert(std::make_pair(key, value));
+    for (auto &entry : lazySolution) {
+      PrologTerm term = entry.second->build();
+      solution.insert(std::make_pair(entry.first, entry.second->build()));
     }
     solutions.push_back(PrologSolution(solution));
   }
-  PL_cut_query(qid);
-  PL_discard_foreign_frame(frame);
   return solutions;
 }
 
 void PrologQuery::execute() const {
-  // Execute the query and ignore solutions.
-  solutions();
+  predicate_t pred = PL_predicate(predicate_.c_str(), terms_.size(), "user");
+  qid_t qid =
+    PL_open_query((module_t) 0, PL_Q_NORMAL, pred, terms_.term());
+  while (PL_next_solution(qid)) {}
+  PL_cut_query(qid);
 }
 
 /**
