@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.6)
 
 enable_testing()
 
-link_directories(${GTEST_LIBS_DIR})
-include_directories("${SPC_SWIPL_INCLUDE_DIRS}" "${GTEST_INCLUDE_DIRS}")
+link_directories(${GTEST_LIBS_DIR} ${GMOCK_LIBS_DIR})
+include_directories("${SPC_SWIPL_INCLUDE_DIRS}" "${GTEST_INCLUDE_DIRS}" "${GMOCK_INCLUDE_DIRS}")
 
 function(add_gtest_all_tests SRC_FILE EXE)
   file(READ "${SRC_FILE}" CONTENTS)
@@ -28,7 +28,7 @@ target_link_libraries(swipltestcommon swiplcpp swipl)
 
 function(add_gtest_test PREFIX)
   add_executable(${PREFIX} ${PREFIX}.cpp)
-  target_link_libraries(${PREFIX} ${GTEST_BOTH_LIBS} swipl swiplcpp swipltestcommon)
+  target_link_libraries(${PREFIX} ${GTEST_BOTH_LIBS} ${GMOCK_BOTH_LIBS} swipl swiplcpp swipltestcommon)
   add_gtest_all_tests(${PREFIX}.cpp ${PREFIX})
 endfunction()
 
