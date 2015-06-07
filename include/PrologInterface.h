@@ -130,16 +130,13 @@ public:
   PrologConjunction(PrologList args);
 };
 
-class PrologSolution {
+class PrologSolution : public std::map<PrologTermHolder, PrologTerm> {
 public:
   typedef std::map<PrologTermHolder, PrologTerm> SolutionTy;
 
   PrologSolution(SolutionTy solution);
 
   PrologTerm get(PrologTermHolder variable) const;
-
-private:
-  SolutionTy solution_;
 };
 
 class PrologQuery {

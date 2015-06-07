@@ -336,12 +336,12 @@ PrologConjunction::PrologConjunction(PrologList args)
  * PrologSolution
  */
 PrologSolution::PrologSolution(PrologSolution::SolutionTy solution)
-    : solution_(solution) {
+    : PrologSolution::SolutionTy(solution) {
 }
 
 PrologTerm PrologSolution::get(PrologTermHolder variable) const {
-  auto it = solution_.find(variable);
-  assert(it != solution_.end() && "Variable does not exist in solution");
+  auto it = this->find(variable);
+  assert(it != this->end() && "Variable does not exist in solution");
   return it->second;
 }
 
