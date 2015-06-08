@@ -21,6 +21,12 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 add_library(swiplcpp SHARED src/PrologInterface.cpp src/LazyTermBuilders.cpp)
 target_link_libraries(swiplcpp swipl)
 
+install(TARGETS swiplcpp DESTINATION lib)
+install(FILES include/PrologInterface.h DESTINATION include)
+install(FILES
+  cmake/modules/SPCFindCPP11.cmake cmake/modules/SPCFindSWIProlog.cmake
+  DESTINATION cmake/modules)
+
 add_subdirectory("ext/gtest/")
 add_subdirectory("ext/gmock/")
 add_subdirectory("tests/")
